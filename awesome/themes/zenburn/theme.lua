@@ -8,7 +8,7 @@
 
 -- {{{ Main
 theme = {}
-theme.wallpaper_space = "/home/hegza/Pictures/images/wallpapers/pacific_ocean_from_space-wallpaper-1366x768.jpg"
+theme.wallpaper_space = "/home/tupsu/.config/awesome/themes/wallp.jpg"
 theme.wallpaper_space_dark = "/home/hegza/Pictures/images/wallpapers/lovely-earth-hd-from-space-p-anomaly-warzone.jpg"
 theme.wallpaper_earth = "/home/hegza/Pictures/images/wallpapers/earth-map-huge.jpg"
 theme.wallpaper_cmd = "feh --bg-scale "

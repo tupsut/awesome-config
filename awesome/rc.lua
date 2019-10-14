@@ -41,7 +41,7 @@ end
 
 -- This is used later as the default terminal and editor to run.
 terminal = "urxvt"
-editor = os.getenv("EDITOR") or "vim"
+editor = "nano"
 editor_cmd = terminal .. " -e " .. editor
 
 -- Default modkey.
@@ -59,7 +59,7 @@ function run_once(prg,arg_string,pname,screen)
     if not arg_string then 
         awful.util.spawn_with_shell("pgrep -f -u $USER -x '" .. pname .. "' || (" .. prg .. ")",screen)
     else
-        awful.util.spawn_with_shell("pgrep -f -u $USER -x '" .. pname .. " ".. arg_string .."' || (" .. prg .. " " .. arg_string .. ")",screen)
+        awful.util.spawn.with_shell("pgrep -f -u $USER -x '" .. pname .. " ".. arg_string .."' || (" .. prg .. " " .. arg_string .. ")",screen)
     end
 end
 
@@ -69,14 +69,12 @@ end
 run_once("cbatticon")
 run_once("dropbox")
 run_once("nm-applet")
-awful.spawn.with_shell(terminal .. " -title evo -e zsh -c \"pgrep evo || evo\"")
--- TODO: pgrep can't find the process => leads to duplicates (same for saskia-irc)
---awful.spawn.with_shell("pgrep memo || " .. terminal .. " -title memo -e zsh -c \"vim -S /usr/local/etc/memo/calendar.session\"")
+run_once("keepass")
 -- }}}
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, and wallpapers
-beautiful.init("/home/hegza/.config/awesome/themes/zenburn/theme.lua")
+beautiful.init("/home/tupsu/.config/awesome/themes/zenburn/theme.lua")
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 local layouts =
@@ -148,20 +146,13 @@ end
 myawesomemenu = {
     { "manual", terminal .. " -e man awesome" },
     { "edit config", editor_cmd .. " " .. "~/.config/awesome/rc.lua" },
-    { "suspend", function() awful.util.spawn_with_shell("pm-suspend") end },
+    { "suspend", function() awful.util.spawn.with_shell("pm-suspend") end },
     { "restart", awesome.restart },
     { "quit", awesome.quit }
 }
 -- Create a application startup menu
-applicationmenu = {
-    { "Terminal (urxvt-zsh)", terminal },
-    { "Evince", function() awful.util.spawn_with_shell("evince") end },
-    { "Chromium", function() awful.util.spawn_with_shell("Chromium") end },
-    { "Newsbeuter", terminal .. " -e newsbeuter" }
-}
 
-mymainmenu = awful.menu({ items = { { "applications", applicationmenu, beautiful.awesome_icon },
-                                    { "awesome", myawesomemenu, beautiful.awesome_icon },
+mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
                                     { "open terminal", terminal }
                                   }
                         })
@@ -398,8 +389,6 @@ globalkeys = awful.util.table.join(
     awful.key({ }, "XF86AudioRaiseVolume" , function () awful.util.spawn("amixer sset Master 2%+ ") end),
     awful.key({ }, "XF86AudioLowerVolume" , function () awful.util.spawn("amixer sset Master 2%-") end),
     awful.key({ }, "XF86AudioMute" , function () awful.util.spawn("amixer sset Master toggle") end),
-
-    awful.key({ modkey,           }, "<", function() awful.util.spawn_with_shell("xscreensaver-command --lock") end),
 
     -- Spawn a new firefox window
     awful.key({ modkey,           }, "i", function() awful.util.spawn_with_shell("firefox -new-window") end),
@@ -729,3 +718,13 @@ end)
 awful.tag.viewonly(tag_by_name["1"])
 tag_by_name["T-toggle"].master_width_factor = 0.7
 
+-- Screen lock management
+-- Run automatic screen locker
+awful.util.spawn_with_shell('~/.config/awesome/locker')
+
+-- Keypress screen lock
+awful.key({ modkey }, "l",
+    function ()
+        awful.util.spawn("sync")
+        awful.util.spawn("xautolock -locknow")
+    end)
