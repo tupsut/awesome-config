@@ -19,7 +19,7 @@ local debug = false
 -- another config (This code will only ever execute for the fallback config)
 if awesome.startup_errors then
     naughty.notify({ preset = naughty.config.presets.critical,
-                     title = "Oops, there were errors during startup!",
+                     title = "Errors during startup:",
                      text = awesome.startup_errors })
 end
 
@@ -32,7 +32,7 @@ do
         in_error = true
 
         naughty.notify({ preset = naughty.config.presets.critical,
-                         title = "Oops, an error happened!",
+                         title = "Error:",
                          text = err })
         in_error = false
     end)
@@ -115,7 +115,7 @@ do
         -- layouts in top-bar have to come first in indices (depends on hotkey-stuff)
         names = {
             "A",
-            "T-toggle",
+            "Toggle",
             "1",        "2",        "3",    "4-www",
             "Q",        "W",        "E",
                         "S",       "D",    "G-stash" },
@@ -548,8 +548,8 @@ bind_default_keys("#" .. "3" + 9, s, tag_by_name["3"], tags.bg)
 -- Bind 4-www
 bind_default_keys("#" .. "4" + 9, s, tag_by_name["4-www"], tags.bg)
 bind_default_keys("#" .. "5" + 9, s, tag_by_name["4-www"], tags.bg)
--- Bind T-toggle
-bind_toggle_keys("t", s, tag_by_name["T-toggle"], tags.bg)
+-- Bind Toggle
+bind_toggle_keys("t", s, tag_by_name["Toggle"], tags.bg)
 -- Bind G-stash
 bind_default_keys("g", s, tag_by_name["G-stash"], tags.bg)
 
@@ -716,7 +716,7 @@ end)
 
 -- Set the "1" tag as the startup tag
 awful.tag.viewonly(tag_by_name["1"])
-tag_by_name["T-toggle"].master_width_factor = 0.7
+tag_by_name["Toggle"].master_width_factor = 0.7
 
 -- Screen lock management
 -- Run automatic screen locker
