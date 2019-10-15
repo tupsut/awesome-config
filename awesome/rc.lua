@@ -144,11 +144,11 @@ end
 -- {{{ Menu
 -- Create a laucher widget and a main menu
 myawesomemenu = {
-    { "manual", terminal .. " -e man awesome" },
+    -- does not work   { "manual", terminal .. " -e man awesome" },
     { "edit config", editor_cmd .. " " .. "~/.config/awesome/rc.lua" },
-    { "suspend", function() awful.util.spawn.with_shell("pm-suspend") end },
+    -- does not work   { "suspend", function() awful.util.spawn_with_shell("pm-suspend") end },
     { "restart", awesome.restart },
-    { "quit", awesome.quit }
+    -- does not work   { "quit", awesome.quit }
 }
 -- Create a application startup menu
 
@@ -577,19 +577,7 @@ awful.rules.rules = {
     -- Define some applications as floating by default
     { rule_any = { class = { "MPlayer", "pinentry", "gimp" } },
       properties = { floating = true } },
-    -- Put memo on A
-    -- TODO: this puts all things with memo in name to the tag (like vim-fast-memo things)
-    { rule = { name = "memo" },
-      properties = { tag = "A" }
-    },
-    -- Put evo on T-toggle
-    { rule = { name = "evo" },
-      properties = { tag = "T-toggle" }
-    },
-    -- Put saskia-irc on T-toggle, as minimized
-    { rule = { name = "saskia-irc" },
-      properties = { tag = "T-toggle", minimized = true }
-    },
+
 	-- Prevent some applications from doing stupid shit
 	{ rule_any = { class = { "chromium", "firefox", "Firefox", "Telegram", "urxvt" } }, properties = {opacity = 1, maximized = false, floating = false} },
 }
@@ -697,7 +685,7 @@ awful.screen.connect_for_each_screen(function(s)
                              text = tag.name .. " -> " .. tostring(tag.selected)})
         end
 
-        -- If any effect tries to activate the T-toggle, enable it
+        -- If any effect tries to activate the toggle, enable it
         --[[
         for toggle, on in pairs(toggle_tags) do
             if toggle.name == tag.name then
@@ -719,12 +707,13 @@ awful.tag.viewonly(tag_by_name["1"])
 tag_by_name["Toggle"].master_width_factor = 0.7
 
 -- Screen lock management
--- Run automatic screen locker
-awful.util.spawn_with_shell('~/.config/awesome/locker')
+  -- Run automatic screen locker
+  -- awful.util.spawn_with_shell('~/.config/awesome/locker.sh')
 
--- Keypress screen lock
-awful.key({ modkey }, "l",
-    function ()
-        awful.util.spawn("sync")
-        awful.util.spawn("xautolock -locknow")
-    end)
+  -- Keypress screen lock
+--awful.key({ modkey },
+--    "l",
+--    function ()
+--        awful.util.spawn("slock")
+--    end)
+    awful.key({ modkey,           }, "l", function () awful.util.spawn(slock) end)
