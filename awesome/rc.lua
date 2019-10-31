@@ -19,7 +19,7 @@ local debug = false
 -- another config (This code will only ever execute for the fallback config)
 if awesome.startup_errors then
     naughty.notify({ preset = naughty.config.presets.critical,
-                     title = "Oops, there were errors during startup!",
+                     title = "Errors during startup:",
                      text = awesome.startup_errors })
 end
 
@@ -32,7 +32,7 @@ do
         in_error = true
 
         naughty.notify({ preset = naughty.config.presets.critical,
-                         title = "Oops, an error happened!",
+                         title = "Error:",
                          text = err })
         in_error = false
     end)
@@ -41,7 +41,7 @@ end
 
 -- This is used later as the default terminal and editor to run.
 terminal = "urxvt"
-editor = os.getenv("EDITOR") or "vim"
+editor = "nano"
 editor_cmd = terminal .. " -e " .. editor
 
 -- Default modkey.
@@ -59,7 +59,7 @@ function run_once(prg,arg_string,pname,screen)
     if not arg_string then 
         awful.util.spawn_with_shell("pgrep -f -u $USER -x '" .. pname .. "' || (" .. prg .. ")",screen)
     else
-        awful.util.spawn_with_shell("pgrep -f -u $USER -x '" .. pname .. " ".. arg_string .."' || (" .. prg .. " " .. arg_string .. ")",screen)
+        awful.util.spawn.with_shell("pgrep -f -u $USER -x '" .. pname .. " ".. arg_string .."' || (" .. prg .. " " .. arg_string .. ")",screen)
     end
 end
 
@@ -69,14 +69,12 @@ end
 run_once("cbatticon")
 run_once("dropbox")
 run_once("nm-applet")
-awful.spawn.with_shell(terminal .. " -title evo -e zsh -c \"pgrep evo || evo\"")
--- TODO: pgrep can't find the process => leads to duplicates (same for saskia-irc)
---awful.spawn.with_shell("pgrep memo || " .. terminal .. " -title memo -e zsh -c \"vim -S /usr/local/etc/memo/calendar.session\"")
+run_once("keepass")
 -- }}}
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, and wallpapers
-beautiful.init("/home/hegza/.config/awesome/themes/zenburn/theme.lua")
+beautiful.init("/home/tupsu/.config/awesome/themes/zenburn/theme.lua")
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 local layouts =
@@ -117,7 +115,7 @@ do
         -- layouts in top-bar have to come first in indices (depends on hotkey-stuff)
         names = {
             "A",
-            "T-toggle",
+            "Toggle",
             "1",        "2",        "3",    "4-www",
             "Q",        "W",        "E",
                         "S",       "D",    "G-stash" },
@@ -146,22 +144,15 @@ end
 -- {{{ Menu
 -- Create a laucher widget and a main menu
 myawesomemenu = {
-    { "manual", terminal .. " -e man awesome" },
+    -- does not work   { "manual", terminal .. " -e man awesome" },
     { "edit config", editor_cmd .. " " .. "~/.config/awesome/rc.lua" },
-    { "suspend", function() awful.util.spawn_with_shell("pm-suspend") end },
+    -- does not work   { "suspend", function() awful.util.spawn_with_shell("pm-suspend") end },
     { "restart", awesome.restart },
-    { "quit", awesome.quit }
+    -- does not work   { "quit", awesome.quit }
 }
 -- Create a application startup menu
-applicationmenu = {
-    { "Terminal (urxvt-zsh)", terminal },
-    { "Evince", function() awful.util.spawn_with_shell("evince") end },
-    { "Chromium", function() awful.util.spawn_with_shell("Chromium") end },
-    { "Newsbeuter", terminal .. " -e newsbeuter" }
-}
 
-mymainmenu = awful.menu({ items = { { "applications", applicationmenu, beautiful.awesome_icon },
-                                    { "awesome", myawesomemenu, beautiful.awesome_icon },
+mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
                                     { "open terminal", terminal }
                                   }
                         })
@@ -376,10 +367,11 @@ globalkeys = awful.util.table.join(
     -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.util.spawn(terminal) end),
     awful.key({ modkey,           }, "space",  function () awful.util.spawn(terminal) end),
+    awful.key({ modkey,           }, "l", function () awful.util.spawn("slock") end),
     awful.key({ modkey, "Control" }, "r", awesome.restart),
     awful.key({ modkey, "Control", "Shift" }, "q", awesome.quit),
 
-    awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)    end),
+    --awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)    end),
     awful.key({ modkey,           }, "h",     function () awful.tag.incmwfact(-0.05)    end),
     awful.key({ modkey, "Shift"   }, "h",     function () awful.tag.incnmaster( 1)      end),
     awful.key({ modkey, "Shift"   }, "l",     function () awful.tag.incnmaster(-1)      end),
@@ -398,8 +390,6 @@ globalkeys = awful.util.table.join(
     awful.key({ }, "XF86AudioRaiseVolume" , function () awful.util.spawn("amixer sset Master 2%+ ") end),
     awful.key({ }, "XF86AudioLowerVolume" , function () awful.util.spawn("amixer sset Master 2%-") end),
     awful.key({ }, "XF86AudioMute" , function () awful.util.spawn("amixer sset Master toggle") end),
-
-    awful.key({ modkey,           }, "<", function() awful.util.spawn_with_shell("xscreensaver-command --lock") end),
 
     -- Spawn a new firefox window
     awful.key({ modkey,           }, "i", function() awful.util.spawn_with_shell("firefox -new-window") end),
@@ -559,8 +549,8 @@ bind_default_keys("#" .. "3" + 9, s, tag_by_name["3"], tags.bg)
 -- Bind 4-www
 bind_default_keys("#" .. "4" + 9, s, tag_by_name["4-www"], tags.bg)
 bind_default_keys("#" .. "5" + 9, s, tag_by_name["4-www"], tags.bg)
--- Bind T-toggle
-bind_toggle_keys("t", s, tag_by_name["T-toggle"], tags.bg)
+-- Bind Toggle
+bind_toggle_keys("t", s, tag_by_name["Toggle"], tags.bg)
 -- Bind G-stash
 bind_default_keys("g", s, tag_by_name["G-stash"], tags.bg)
 
@@ -588,19 +578,7 @@ awful.rules.rules = {
     -- Define some applications as floating by default
     { rule_any = { class = { "MPlayer", "pinentry", "gimp" } },
       properties = { floating = true } },
-    -- Put memo on A
-    -- TODO: this puts all things with memo in name to the tag (like vim-fast-memo things)
-    { rule = { name = "memo" },
-      properties = { tag = "A" }
-    },
-    -- Put evo on T-toggle
-    { rule = { name = "evo" },
-      properties = { tag = "T-toggle" }
-    },
-    -- Put saskia-irc on T-toggle, as minimized
-    { rule = { name = "saskia-irc" },
-      properties = { tag = "T-toggle", minimized = true }
-    },
+
 	-- Prevent some applications from doing stupid shit
 	{ rule_any = { class = { "chromium", "firefox", "Firefox", "Telegram", "urxvt" } }, properties = {opacity = 1, maximized = false, floating = false} },
 }
@@ -708,7 +686,7 @@ awful.screen.connect_for_each_screen(function(s)
                              text = tag.name .. " -> " .. tostring(tag.selected)})
         end
 
-        -- If any effect tries to activate the T-toggle, enable it
+        -- If any effect tries to activate the toggle, enable it
         --[[
         for toggle, on in pairs(toggle_tags) do
             if toggle.name == tag.name then
@@ -727,5 +705,9 @@ end)
 
 -- Set the "1" tag as the startup tag
 awful.tag.viewonly(tag_by_name["1"])
-tag_by_name["T-toggle"].master_width_factor = 0.7
+tag_by_name["Toggle"].master_width_factor = 0.7
+
+-- Screen lock management
+  -- Run automatic screen locker
+  -- awful.util.spawn_with_shell('~/.config/awesome/locker.sh')
 
