@@ -407,6 +407,11 @@ globalkeys = awful.util.table.join(
     -- Unminimize a random client on the current tag
     awful.key({ modkey, "Shift"   }, "n", function() awful.client.restore(s) end),
 
+    -- puush-like screenshots, requires scrot
+    awful.key({ "Control", "Shift" }, "2", function () awful.spawn.with_shell("scrot -u ~/Photos/screenshots/%Y-%m-%d-%T-screenshot.png") end),    
+    awful.key({ "Control", "Shift" }, "3", function () awful.spawn.with_shell("scrot ~/Photos/screenshots/%Y-%m-%d-%T-screenshot.png") end),
+    awful.key({ "Control", "Shift" }, "4", function () awful.spawn.with_shell("sleep 0.2 && scrot -s ~/Photos/screenshots/%Y-%m-%d-%T-screenshot.png") end),    
+
     -- Prompt
 	-- HACK: mouse.screen is nil => replaced it with 1
     awful.key({ modkey,           }, "r", function() mypromptbox[1]:run() end),
