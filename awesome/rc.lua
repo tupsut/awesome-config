@@ -386,20 +386,25 @@ globalkeys = awful.util.table.join(
     awful.key({ }, "XF86MonBrightnessDown" , function () awful.util.spawn("xbacklight -dec 5") end),
     awful.key({ }, "XF86MonBrightnessUp" , function () awful.util.spawn("xbacklight -inc 5") end),
 
-    -- Volume keys
+    -- Volume keys, requires alsamixer
     awful.key({ }, "XF86AudioRaiseVolume" , function () awful.util.spawn("amixer sset Master 2%+ ") end),
     awful.key({ }, "XF86AudioLowerVolume" , function () awful.util.spawn("amixer sset Master 2%-") end),
     awful.key({ }, "XF86AudioMute" , function () awful.util.spawn("amixer sset Master toggle") end),
 
-    -- Spawn a new firefox window
-    awful.key({ modkey,           }, "i", function() awful.util.spawn_with_shell("firefox -new-window") end),
+    -- Spawn a new firefox window, requires firefox
+    awful.key({ modkey,           }, "i", function () awful.util.spawn_with_shell("firefox -new-window") end),
 
     -- Unminimize a random client on the current tag
-    awful.key({ modkey, "Shift"   }, "n", function() awful.client.restore(s) end),
+    awful.key({ modkey, "Shift"   }, "n", function () awful.client.restore(s) end),
+
+    -- scrot automation, requires scrot
+    awful.key({ "Control", "Shift" }, "2", function () awful.spawn.with_shell("scrot -u ~/Photos/screenshots/%Y-%m-%d-%T-screenshot.png") end),    
+    awful.key({ "Control", "Shift" }, "3", function () awful.spawn.with_shell("scrot ~/Photos/screenshots/%Y-%m-%d-%T-screenshot.png") end),
+    awful.key({ "Control", "Shift" }, "4", function () awful.spawn.with_shell("sleep 0.2 && scrot -s ~/Photos/screenshots/%Y-%m-%d-%T-screenshot.png") end),    
 
     -- Prompt
 	-- HACK: mouse.screen is nil => replaced it with 1
-    awful.key({ modkey,           }, "r", function() mypromptbox[1]:run() end),
+    awful.key({ modkey,           }, "r", function () mypromptbox[1]:run() end),
 
     --[[ -- mod+x replaced by awful.tag.viewnext
     awful.key({ modkey }, "x",
@@ -707,7 +712,7 @@ end)
 awful.tag.viewonly(tag_by_name["1"])
 tag_by_name["Toggle"].master_width_factor = 0.7
 
--- Screen lock management
+-- Screen lock management, requires slock and locker.sh
   -- Run automatic screen locker
   -- awful.util.spawn_with_shell('~/.config/awesome/locker.sh')
 
